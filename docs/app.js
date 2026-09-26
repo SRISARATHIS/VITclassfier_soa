@@ -1,7 +1,6 @@
 import { pipeline, env } from "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.2";
 
 env.allowLocalModels = false;
-// Deployed as a fully static GitHub Pages app.
 const input = document.querySelector("#image-input");
 const dropZone = document.querySelector("#drop-zone");
 const idle = document.querySelector("#idle-state");
@@ -13,12 +12,19 @@ const preview = document.querySelector("#preview");
 let classifier;
 
 function show(state) {
+  /** Show exactly one application state panel.
+   * @param {"idle" | "loading" | "result"} state The panel to display.
+   * @returns {void}
+   */
   idle.classList.toggle("hidden", state !== "idle");
   loading.classList.toggle("hidden", state !== "loading");
   result.classList.toggle("hidden", state !== "result");
 }
 
 async function model() {
+  /** Load and cache the browser-side ViT classifier.
+   * @returns {Promise<Function>} The zero-shot image classifier.
+   */
   if (!classifier) {
     title.textContent = "Teaching my tiny brain…";
     copy.textContent = "Downloading the ViT model (first visit only)";
@@ -34,6 +40,10 @@ async function model() {
 }
 
 async function classify(file) {
+  /** Predict whether an uploaded image contains a cat or dog.
+   * @param {File} file The image selected by the visitor.
+   * @returns {Promise<void>}
+   */
   if (!file || !file.type.startsWith("image/")) return;
   show("loading");
   preview.src = URL.createObjectURL(file);

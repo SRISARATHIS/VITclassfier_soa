@@ -40,6 +40,15 @@ The best checkpoint is `artifacts/best.pt`; metrics are written incrementally
 to `artifacts/metrics.json` and `artifacts/history.csv`, so the dashboard can
 show progress while a job is running.
 
+## Scratch-built ViT on Kaggle Cats-vs-Dogs
+
+`train_scratch_vit.py` contains the Vision Transformer architecture itself:
+patch projection, a learnable class token and position embeddings, eight
+Transformer encoder blocks, and a classification head. It uses no pretrained
+weights. The Molab job downloads Kaggle's public
+`shaunthesheep/microsoft-catsvsdogs-dataset` archive with `curl`, trains this
+model on the GPU, and saves `artifacts/scratch_vit/best.pt`.
+
 ## Molab workflow
 
 1. Create a GitHub repository, commit and push this project.
