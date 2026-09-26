@@ -1,6 +1,7 @@
 import { pipeline, env } from "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.2";
 
 env.allowLocalModels = false;
+// Deployed as a fully static GitHub Pages app.
 const input = document.querySelector("#image-input");
 const dropZone = document.querySelector("#drop-zone");
 const idle = document.querySelector("#idle-state");
