@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#ff7aa2" />
+    <title>Paws & Pixels · Cat or Dog?</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero">
+        <div class="paw paw-one">🐾</div><div class="paw paw-two">🐾</div>
+        <p class="eyebrow">A TINY VISION LAB</p>
+        <h1>Paws <span>&</span> Pixels</h1>
+        <p class="subtitle">Give me a fuzzy mystery. I’ll guess: cat or dog?</p>
+      </section>
+
+      <section class="card" aria-live="polite">
+        <div id="idle-state" class="stage">
+          <label class="drop-zone" for="image-input" id="drop-zone">
+            <input id="image-input" type="file" accept="image/png,image/jpeg,image/webp" />
+            <span class="upload-icon">☁️</span>
+            <strong>Drop a pet photo here</strong>
+            <span>or tap to choose one</span>
+          </label>
+          <p class="hint">Best with one furry face in good light ✨</p>
+        </div>
+
+        <div id="loading-state" class="stage hidden">
+          <div class="loader-wrap"><span class="loader-ear left"></span><span class="loader-ear right"></span><div class="loader-face">•ᴥ•</div></div>
+          <h2 id="loading-title">Teaching my tiny brain…</h2>
+          <p id="loading-copy">Warming up the Vision Transformer</p>
+          <div class="progress-track"><div id="progress-bar" class="progress-bar"></div></div>
+        </div>
+
+        <div id="result-state" class="result hidden">
+          <div class="photo-wrap"><img id="preview" alt="Uploaded pet" /><span class="sparkle a">✦</span><span class="sparkle b">✦</span></div>
+          <div class="answer">
+            <p class="tiny-label">MY BEST GUESS</p>
+            <h2 id="prediction">A very cute…</h2>
+            <p id="confidence" class="confidence"></p>
+            <div class="confidence-track"><div id="confidence-fill" class="confidence-fill"></div></div>
+            <p id="detail" class="detail"></p>
+            <button id="try-again" class="try-again">Try another photo <span>↻</span></button>
+          </div>
+        </div>
+      </section>
+
+      <p class="privacy">🔒 Your photo stays in your browser. The model runs on your device.</p>
+    </main>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>

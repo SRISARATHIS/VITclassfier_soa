@@ -4,6 +4,14 @@ Fine-tune a pretrained Vision Transformer for difficult cat/dog examples, then
 use `molab_dashboard.py` in a Molab marimo session to train on a GPU and run
 interactive image inference.
 
+## Cute web classifier
+
+`docs/` is a responsive, static upload website for GitHub Pages. It runs a
+CLIP Vision Transformer in the visitor's browser, so images are not uploaded
+to a server. The first visit downloads the browser model; later visits use the
+browser cache. Pushing changes under `docs/` deploys the site through the
+included GitHub Actions workflow.
+
 ## Dataset layout
 
 Put a deliberately difficult, curated dataset in a directory with this shape:
