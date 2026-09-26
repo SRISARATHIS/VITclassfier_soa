@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "catdog-vit"
+version = "0.1.0"
+description = "Vision Transformer experiments for cat and dog classification"
+requires-python = ">=3.10"
+dependencies = [
+  "torch>=2.5",
+  "torchvision>=0.20",
+  "timm>=1.0.15",
+  "pillow>=10.4",
+  "tqdm>=4.66",
+]
+
+[project.scripts]
+catdog-train-scratch = "catdog_vit.train_scratch:main"
+catdog-train-pretrained = "catdog_vit.train_pretrained:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

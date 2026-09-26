@@ -1,8 +1,18 @@
 # Hard Cat vs Dog — ViT
 
-Fine-tune a pretrained Vision Transformer for difficult cat/dog examples, then
-use `molab_dashboard.py` in a Molab marimo session to train on a GPU and run
+Train and evaluate Vision Transformers for cat/dog images, then use
+`apps/molab_dashboard.py` in a Molab marimo session to train on a GPU and run
 interactive image inference.
+
+## Project layout
+
+```
+src/catdog_vit/       Python package containing all model and training code
+  train_scratch.py    ViT trained from random initialization
+  train_pretrained.py Pretrained ViT fine-tuning baseline
+apps/                 Marimo dashboard code for Molab
+docs/                 Static GitHub Pages upload interface
+```
 
 ## Cute web classifier
 
@@ -33,7 +43,7 @@ stopping improve robustness for visually ambiguous images.
 ## Training
 
 ```bash
-python train.py --data-dir data --output-dir artifacts --epochs 20 --batch-size 64
+python -m catdog_vit.train_pretrained --data-dir data --output-dir artifacts --epochs 20 --batch-size 64
 ```
 
 The best checkpoint is `artifacts/best.pt`; metrics are written incrementally
@@ -42,7 +52,7 @@ show progress while a job is running.
 
 ## Scratch-built ViT on Kaggle Cats-vs-Dogs
 
-`train_scratch_vit.py` contains the Vision Transformer architecture itself:
+`src/catdog_vit/train_scratch.py` contains the Vision Transformer architecture itself:
 patch projection, a learnable class token and position embeddings, eight
 Transformer encoder blocks, and a classification head. It uses no pretrained
 weights. The Molab job downloads Kaggle's public

@@ -1,4 +1,4 @@
-"""Run this file with `marimo edit molab_dashboard.py` in Molab."""
+"""Run this file with `marimo edit apps/molab_dashboard.py` in Molab."""
 import marimo
 
 app = marimo.App(width="full")
@@ -49,7 +49,7 @@ def __(Path, data_url, mo, prepare, repo_url, subprocess):
             if clone.returncode:
                 prepare_message = f"Clone failed: {clone.stderr[-500:]}"
             else:
-                install = subprocess.run(["bash", "-lc", f"cd {workspace} && {__import__('sys').executable} -m pip install -q -r requirements.txt"], capture_output=True, text=True)
+                install = subprocess.run(["bash", "-lc", f"cd {workspace} && {__import__('sys').executable} -m pip install -q -e ."], capture_output=True, text=True)
                 if install.returncode:
                     prepare_message = f"Dependency installation failed: {install.stderr[-500:]}"
                 elif data_url.value.strip():
@@ -75,10 +75,10 @@ def __(mo):
 @app.cell
 def __(batch_size, epochs, mo, start, subprocess, sys, workspace):
     job = getattr(__import__('builtins'), "_catdog_job", None)
-    if start.value and workspace.exists() and (workspace / "data" / "train").exists():
+    if start.value and workspace.exists() and (workspace / "data" / "kaggle" / "PetImages").exists():
         artifacts = workspace / "artifacts"
         artifacts.mkdir(exist_ok=True)
-        job = subprocess.Popen([sys.executable, "train.py", "--data-dir", "data", "--output-dir", "artifacts",
+        job = subprocess.Popen([sys.executable, "-m", "catdog_vit.train_scratch", "--data-root", "data/kaggle/PetImages", "--output-dir", "artifacts/scratch_vit",
                                 "--epochs", str(epochs.value), "--batch-size", str(batch_size.value)],
                                cwd=workspace, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
         __import__('builtins')._catdog_job = job
@@ -92,7 +92,7 @@ def __(batch_size, epochs, mo, start, subprocess, sys, workspace):
 @app.cell
 def __(Path, json, mo, time, workspace):
     refresh = mo.ui.refresh(options=[3, 5, 10], default_interval=5)
-    metrics_path = workspace / "artifacts" / "metrics.json"
+    metrics_path = workspace / "artifacts" / "scratch_vit" / "metrics.json"
     metrics = json.loads(metrics_path.read_text()) if metrics_path.exists() else {"state": "waiting"}
     accuracy = metrics.get("val_accuracy", metrics.get("best_accuracy", 0))
     dashboard = mo.vstack([
@@ -107,8 +107,8 @@ def __(Path, json, mo, time, workspace):
 
 @app.cell
 def __(mo, workspace):
-    checkpoint = workspace / "artifacts" / "best.pt"
-    history = workspace / "artifacts" / "history.csv"
+    checkpoint = workspace / "artifacts" / "scratch_vit" / "best.pt"
+    history = workspace / "artifacts" / "scratch_vit" / "history.csv"
     if checkpoint.exists():
         mo.vstack([
             mo.md("### Download results via the notebook connection"),
@@ -138,7 +138,11 @@ def __(Path, checkpoint, mo, upload):
         payload = upload.value[0]
         image = Image.open(io.BytesIO(payload.contents)).convert("RGB")
         saved = torch.load(checkpoint, map_location="cpu", weights_only=False)
-        model = timm.create_model(saved["model"], pretrained=False, num_classes=len(saved["classes"]))
+        if saved["model"] == "scratch_vit_384_8_6":
+            from catdog_vit.train_scratch import VisionTransformer
+            model = VisionTransformer()
+        else:
+            model = timm.create_model(saved["model"], pretrained=False, num_classes=len(saved["classes"]))
         model.load_state_dict(saved["state_dict"])
         model.eval()
         tf = transforms.Compose([transforms.Resize(int(saved["image_size"] * 1.15)), transforms.CenterCrop(saved["image_size"]), transforms.ToTensor(), transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))])
